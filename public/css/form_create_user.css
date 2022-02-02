@@ -1,0 +1,23 @@
+#user>div, #adresse>div{
+    width: 100%;
+    display: flex;
+    flex-direction: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+#user>div>input, #adresse>div>input{
+    padding: 10px;
+}
+
+#form_div{
+    width: 100%;
+    border: 1px solid red;
+}
+
+#form_div>form{
+    width: 20%;
+    border: 1px solid green;
+    margin: auto;
+}
