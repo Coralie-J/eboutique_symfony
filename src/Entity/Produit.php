@@ -31,6 +31,15 @@ class Produit
     #[ORM\OneToMany(mappedBy: 'id_produit', targetEntity: Media::class)]
     private $media;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private $description;
+
+    #[ORM\Column(type: 'text')]
+    private $description2;
+
+    #[ORM\Column(type: 'string', length: 70, nullable: true)]
+    private $interprete;
+
     public function __construct()
     {
         $this->media = new ArrayCollection();
@@ -117,5 +126,45 @@ class Produit
         }
 
         return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getDescription2(): ?string
+    {
+        return $this->description2;
+    }
+
+    public function setDescription2(string $description2): self
+    {
+        $this->description2 = $description2;
+
+        return $this;
+    }
+
+    public function getInterprete(): ?string
+    {
+        return $this->interprete;
+    }
+
+    public function setInterprete(?string $interprete): self
+    {
+        $this->interprete = $interprete;
+
+        return $this;
+    }
+
+    public function __toString(){
+        return $this->nom;
     }
 }

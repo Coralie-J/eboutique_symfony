@@ -15,10 +15,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProduitController extends AbstractController
 {
     #[Route('/', name: 'produit_index', methods: ['GET'])]
-    public function index(ProduitRepository $produitRepository): Response
+    public function index(ProduitRepository $produitRepository, EntityManagerInterface $entityManager): Response
     {
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
         return $this->render('produit/index.html.twig', [
             'produits' => $produitRepository->findAll(),
+            'categories' => $categories
         ]);
     }
 
@@ -29,7 +33,11 @@ class ProduitController extends AbstractController
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
         if ($form->isSubmitted() && $form->isValid()) {
+            // $produit->setDescription2()
             $entityManager->persist($produit);
             $entityManager->flush();
 
@@ -39,6 +47,7 @@ class ProduitController extends AbstractController
         return $this->renderForm('produit/new.html.twig', [
             'produit' => $produit,
             'form' => $form,
+            'categories' => $categories
         ]);
     }
 
@@ -56,6 +65,9 @@ class ProduitController extends AbstractController
         $form = $this->createForm(ProduitType::class, $produit);
         $form->handleRequest($request);
 
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
@@ -65,6 +77,7 @@ class ProduitController extends AbstractController
         return $this->renderForm('produit/edit.html.twig', [
             'produit' => $produit,
             'form' => $form,
+            'categories' => $categories
         ]);
     }
 

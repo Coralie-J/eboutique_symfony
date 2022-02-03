@@ -12,6 +12,8 @@
                 <th>Nom</th>
                 <th>Prix_unitaire</th>
                 <th>Disponibilite</th>
+                <th>Type categorie </th>
+                <th>Interprète </th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -22,6 +24,8 @@
                 <td>{{ produit.nom }}</td>
                 <td>{{ produit.prixUnitaire }}</td>
                 <td>{{ produit.disponibilite ? 'Yes' : 'No' }}</td>
+                <td>{{ produit.TypeCategorie }}</td>
+                <td>{{ produit.interprete }}</td>
                 <td>
                     <a href="{{ path('produit_show', {'id': produit.id}) }}">show</a>
                     <a href="{{ path('produit_edit', {'id': produit.id}) }}">edit</a>
