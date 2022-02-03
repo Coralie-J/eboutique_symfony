@@ -20,17 +20,24 @@
             <img src="/images/logo.png" alt="logo" id="logo" />
 
             <div>
-                {% block connexion %}
+                {% if app.session.get('username') %}
+
+                    <a href="/" class="link_menu"> {{ app.session.get('username') }} </a>
+                    <a href="/user/deconnexion" class="link_menu"> Déconnexion </a>
+
+                {% else %}
                     <a href="/user/new" class="link_menu">Créer un compte </a>
-                    <a href="/user/login" class="link_menu"> Connexion </a>
-                {% endblock %}
+                    <a href="/user/connexion" class="link_menu"> Connexion </a>
+
+                {% endif %}
             </div>
         </div>
 
         <div id="categories_menu">
             <ul id="menu">
+                <li class="item_menu"><a href="/user" class="link"> Tous nos produits </a></li>
                 {% for categorie in categories %}
-                    <li class="item_menu"><a href="" class="link"> {{ categorie.nom }} </a></li>
+                    <li class="item_menu"><a href="/categorie/{{categorie.id}}" class="link"> {{ categorie.nom }} </a></li>
                 {% else %}
                     <li> Aucune catégorie </li>
                 {% endfor %}

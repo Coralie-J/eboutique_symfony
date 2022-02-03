@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 #[Route('/user')]
 class UserController extends AbstractController{
@@ -40,7 +41,7 @@ class UserController extends AbstractController{
 
         if ($request->getMethod() === 'POST'){
             $user->setNom($_POST['nom']);
-            $user->setEmail($_POST['adresse']);
+            $user->setEmail($_POST['email']);
             $user->setPassword(hash('sha256',$_POST['password']));
             $user->setLogin($_POST['login']);
             $user->setPrenom($_POST['prenom']);
@@ -73,6 +74,43 @@ class UserController extends AbstractController{
             'user' => $user,
             'categories' => $categories,
         ]);
+    }
+
+    #[Route('/connexion', name: 'user_connexion', methods: ['GET', 'POST'])]
+    public function connexion(Request $request, EntityManagerInterface $entityManager, Session $session): Response
+    {
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+        $info = '';
+
+        if ($request->getMethod() === 'POST'){
+            $id = $entityManager->createQuery('SELECT u.id, u.prenom FROM App\Entity\User u
+                 WHERE u.login = :login AND u.password = :password')
+                    ->setParameters(array(
+                        'login' => $_POST['login'],
+                        'password' => hash('sha256',$_POST['password'])
+                    ));
+
+            $id_result = $id->getResult();
+
+            if ($id_result){
+                $session->set('username', $id_result[0]['prenom']);
+                return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
+            } else {
+                $info = 'Indentifiants incorrects';
+            }
+        }
+
+        return $this->render('user/form_login.html.twig', [
+            'categories' => $categories,
+            'info' => $info
+        ]);
+    }
+
+    #[Route('/deconnexion', name: 'user_deconnexion', methods: ['GET', 'POST'])]
+    public function deconnexion(Session $session): Response {
+        $session->remove('username');
+        return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}', name: 'user_show', methods: ['GET'])]
@@ -110,23 +148,5 @@ class UserController extends AbstractController{
         }
 
         return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
-    }
-
-    #[Route('/login', name: 'user_login', methods: ['GET', 'POST'])]
-    public function doLogin(EntityManagerInterface $entityManager): Response
-    {
-        if ($request->getMethod() === 'POST'){
-
-
-        }
-
-        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
-        $categories = $req->getResult();
-
-
-        return $this->render('user/form.login.html.twig', [
-            'user' => $user,
-            'categories' => $categories
-        ]);
     }
 }

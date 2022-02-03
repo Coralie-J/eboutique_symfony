@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/all_products.css" >
+{% endblock %}
+
+{% block body %}
+    <div id="presente_produits">
+        {% for produit in produits %}
+
+            <div class="produits">
+                {% for media in produit.media %}
+
+                    <p><img src={{ media.source }} alt={{media.alt}} class="img_produits"/> </p>
+
+                {% endfor %}
+
+                <p>{{ produit.nom }}</p>
+                <p>{{ produit.interprete }}</p>
+                <p>{{ produit.prixUnitaire }} €</p>
+                <p>{{ produit.disponibilite ? 'Yes' : 'No' }}</p>
+                <p>{{ produit.TypeCategorie }}</p>
+
+                <button> Ajouter au panier </button>
+            </div>
+
+        {% endfor %}
+    </div>
+
+{% endblock %}

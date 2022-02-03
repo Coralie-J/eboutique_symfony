@@ -47,10 +47,16 @@ class CategorieController extends AbstractController
     }
 
     #[Route('/{id}', name: 'categorie_show', methods: ['GET'])]
-    public function show(Categorie $categorie): Response
+    public function show(Categorie $categorie, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('categorie/show.html.twig', [
+
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
+        return $this->render('categorie/show_products.html.twig', [
             'categorie' => $categorie,
+            'produits' => $categorie->getProduits(),
+            'categories'=> $categories
         ]);
     }
 
