@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Adresse;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,23 +35,42 @@ class UserController extends AbstractController{
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        // $form = $this->createForm(UserType::class, $user);
+        // $form->handleRequest($request);
+
+        if ($request->getMethod() === 'POST'){
+            $user->setNom($_POST['nom']);
+            $user->setEmail($_POST['adresse']);
+            $user->setPassword(hash('sha256',$_POST['password']));
+            $user->setLogin($_POST['login']);
+            $user->setPrenom($_POST['prenom']);
+            $adress = new Adresse();
+            $adress->setAdresse($_POST['adresse']);
+            $adress->setCodePostal($_POST['code_postal']);
+            $adress->setVille($_POST['ville']);
+            $user->addAdress($adress);
+            $entityManager->persist($user);
+            $entityManager->persist($adress);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
+
+        }
 
         $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
         $categories = $req->getResult();
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        /*if ($form->isSubmitted() && $form->isValid()) {
             $user->setPassword(hash('sha256', $user->getPassword()));
+
             $entityManager->persist($user);
             $entityManager->flush();
 
             return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
-        }
+        }*/
 
-        return $this->renderForm('user/new.html.twig', [
+        return $this->renderForm('user/form.html.twig', [
             'user' => $user,
-            'form' => $form,
             'categories' => $categories,
         ]);
     }
@@ -92,18 +112,21 @@ class UserController extends AbstractController{
         return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/index.php', name: 'user_display', methods: ['GET'])]
-    public function display(EntityManagerInterface $entityManager) : Response {
+    #[Route('/login', name: 'user_login', methods: ['GET', 'POST'])]
+    public function doLogin(EntityManagerInterface $entityManager): Response
+    {
+        if ($request->getMethod() === 'POST'){
+
+
+        }
+
         $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
         $categories = $req->getResult();
 
-        $req_produits = $entityManager->createQuery('SELECT p FROM App\Entity\Produit p');
-        $produits = $req2->getResult();
 
-        return $this->renderForm('user/default.html.twig', [
-            'categories' => $categories,
-            'produits' => $produits
+        return $this->render('user/form.login.html.twig', [
+            'user' => $user,
+            'categories' => $categories
         ]);
-
     }
 }

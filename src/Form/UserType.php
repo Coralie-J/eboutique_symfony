@@ -3,9 +3,13 @@
 namespace App\Form;
 
 use App\Entity\User;
+use App\Entity\Adresse;
+use App\Form\AdresseType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class UserType extends AbstractType
 {
@@ -17,7 +21,12 @@ class UserType extends AbstractType
             ->add('password')
             ->add('nom')
             ->add('prenom')
-        ;
+            ->add('adresses', AdresseType::class, array(
+                'data_class' => null));
+
+            /*AdresseType::class, [
+                    'data_class' => Adresse::class
+                ]);*/
     }
 
     public function configureOptions(OptionsResolver $resolver): void

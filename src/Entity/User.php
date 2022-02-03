@@ -21,7 +21,7 @@ class User
     #[ORM\Column(type: 'string', length: 60)]
     private $login;
 
-    #[ORM\Column(type: 'string', length: 50)]
+    #[ORM\Column(type: 'text')]
     private $password;
 
     #[ORM\Column(type: 'string', length: 60)]
@@ -165,5 +165,9 @@ class User
         }
 
         return $this;
+    }
+
+    public function __toString(){
+        return $this->login;
     }
 }
