@@ -12,14 +12,22 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/user')]
-class UserController extends AbstractController
-{
+class UserController extends AbstractController{
+
     #[Route('/', name: 'user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
-        return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
+        $req_produits = $entityManager->createQuery('SELECT p FROM App\Entity\Produit p');
+        $produits = $req_produits->getResult();
+
+        return $this->renderForm('user/default.html.twig', [
+            'categories' => $categories,
+            'produits' => $produits
         ]);
+
     }
 
     #[Route('/new', name: 'user_new', methods: ['GET', 'POST'])]
@@ -82,5 +90,20 @@ class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/index.php', name: 'user_display', methods: ['GET'])]
+    public function display(EntityManagerInterface $entityManager) : Response {
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
+        $req_produits = $entityManager->createQuery('SELECT p FROM App\Entity\Produit p');
+        $produits = $req2->getResult();
+
+        return $this->renderForm('user/default.html.twig', [
+            'categories' => $categories,
+            'produits' => $produits
+        ]);
+
     }
 }

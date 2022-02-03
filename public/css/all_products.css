@@ -1,0 +1,18 @@
+.produits{
+    width: 25%;
+    margin-bottom: 40px;
+}
+
+#presente_produits{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    text-align: center;
+}
+
+.img_produits{
+    width: 300px;
+    height: auto;
+}
