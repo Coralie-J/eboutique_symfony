@@ -13,31 +13,37 @@
             </tr>
         </thead>
         <tbody>
-        {% for commande in commandes %}
-            <tr>
-                <td><a href="/commande/show/{{ commande.id }}"> Commande n°{{ commande.id }} </a></td>
-                <td>{{ commande.date ? commande.date|date('d/m/Y') : '' }}</td>
+        {% if commandes | length > 0 %}
+            {% for commande in commandes %}
+                <tr>
+                    <td><a href="/commande/show/{{ commande.id }}"> Commande n°{{ commande.id }} </a></td>
+                    <td>{{ commande.date ? commande.date|date('d/m/Y') : '' }}</td>
 
-                {% set montant = 0 %}
+                    {% set montant = 0 %}
 
-                {% for commandeline in commande.commandeLines %}
+                    {% for commandeline in commande.commandeLines %}
 
-                    {% set montant = montant + (commandeline.IdProduit.prixUnitaire * commandeline.quantite) %}
+                        {% set montant = montant + (commandeline.IdProduit.prixUnitaire * commandeline.quantite) %}
 
-                {% endfor %}
+                    {% endfor %}
 
-                <td> Montant de la commande : {{ montant }} € </td>
+                    <td> Montant de la commande : {{ montant }} € </td>
 
-            </tr>
+                </tr>
 
-        {% endfor %}
+            {% endfor %}
 
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <p>{{ user.Adresses[0].adresse }} </p>
-    <p>{{ user.Adresses[0].CodePostal }} </p>
-    <p>{{ user.Adresses[0].ville }} </p>
+        <p>{{ user.Adresses[0].adresse }} </p>
+        <p>{{ user.Adresses[0].CodePostal }} </p>
+        <p>{{ user.Adresses[0].ville }} </p>
+
+    {% else %}
+        <p> Vous n'avez passé aucune commande </p>
+
+    {% endif %}
 
 {% endblock %}

@@ -8,6 +8,11 @@
     <table class="table">
         <tbody>
             <tr>
+                {% for media in produit.media %}
+                    <td><img src={{ media.source }} alt={{media.alt}} class="img_produits"/> </td>
+                {% endfor %}
+            </tr>
+            <tr>
                 <th>Nom</th>
                 <td>{{ produit.nom }}</td>
             </tr>
