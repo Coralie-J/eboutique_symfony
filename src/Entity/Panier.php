@@ -53,12 +53,23 @@ class Panier
 
     public function addPanierLine(PanierLine $panierLine): self
     {
+
         if (!$this->panierLines->contains($panierLine)) {
             $this->panierLines[] = $panierLine;
             $panierLine->setIdPanier($this);
         }
 
         return $this;
+    }
+
+    public function updatePanierLine(PanierLine $panierline): ?PanierLine {
+        foreach($this->panierLines as $panierLineP){
+            if ($panierline->getIdProduit()->getId() == $panierLineP->getIdProduit()->getId()){
+                $panierLineP->setQuantite($panierLineP->getQuantite() + 1);
+                return $panierLineP;
+            }
+        }
+        return null;
     }
 
     public function removePanierLine(PanierLine $panierLine): self

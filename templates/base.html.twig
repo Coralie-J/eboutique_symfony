@@ -23,10 +23,12 @@
                 {% if app.session.get('username') %}
 
                     <a href="/" class="link_menu"> {{ app.session.get('username') }} </a>
+                    <a href="/panier"  class="link_menu"> Panier </a>
                     <a href="/user/deconnexion" class="link_menu"> Déconnexion </a>
 
                 {% else %}
                     <a href="/user/new" class="link_menu">Créer un compte </a>
+                    <a href="/panier"  class="link_menu"> Panier </a>
                     <a href="/user/connexion" class="link_menu"> Connexion </a>
 
                 {% endif %}

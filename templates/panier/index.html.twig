@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panier index{% endblock %}
+
+{% block body %}
+    <h1>Panier index</h1>
+
+    <table class="table">
+
+        <tbody>
+
+            {% for produit in panier %}
+                <tr>
+                    <td>{{ produit.IdProduit }}</td>
+                    <td>{{ produit.quantite }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

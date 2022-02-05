@@ -25,7 +25,7 @@ class UserController extends AbstractController{
         $req_produits = $entityManager->createQuery('SELECT p FROM App\Entity\Produit p');
         $produits = $req_produits->getResult();
 
-        return $this->renderForm('user/default.html.twig', [
+        return $this->render('user/default.html.twig', [
             'categories' => $categories,
             'produits' => $produits
         ]);
@@ -70,7 +70,7 @@ class UserController extends AbstractController{
             return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
         }*/
 
-        return $this->renderForm('user/form.html.twig', [
+        return $this->render('user/form.html.twig', [
             'user' => $user,
             'categories' => $categories,
         ]);
