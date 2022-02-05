@@ -36,8 +36,6 @@ class UserController extends AbstractController{
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = new User();
-        // $form = $this->createForm(UserType::class, $user);
-        // $form->handleRequest($request);
 
         if ($request->getMethod() === 'POST'){
             $user->setNom($_POST['nom']);
@@ -60,15 +58,6 @@ class UserController extends AbstractController{
 
         $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
         $categories = $req->getResult();
-
-        /*if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword(hash('sha256', $user->getPassword()));
-
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
-        }*/
 
         return $this->render('user/form.html.twig', [
             'user' => $user,
@@ -94,6 +83,7 @@ class UserController extends AbstractController{
             $id_result = $id->getResult();
 
             if ($id_result){
+                $session->set('id', $id_result[0]['id']);
                 $session->set('username', $id_result[0]['prenom']);
                 return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
             } else {
@@ -110,43 +100,8 @@ class UserController extends AbstractController{
     #[Route('/deconnexion', name: 'user_deconnexion', methods: ['GET', 'POST'])]
     public function deconnexion(Session $session): Response {
         $session->remove('username');
+        $session->remove('id');
         return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}', name: 'user_show', methods: ['GET'])]
-    public function show(User $user): Response
-    {
-        return $this->render('user/show.html.twig', [
-            'user' => $user,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
-    }
 }

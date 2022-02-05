@@ -18,10 +18,9 @@
                 <p>{{ produit.nom }}</p>
                 <p>{{ produit.interprete }}</p>
                 <p>{{ produit.prixUnitaire }} €</p>
-                <p>{{ produit.disponibilite ? 'Yes' : 'No' }}</p>
                 <p>{{ produit.TypeCategorie }}</p>
 
-                <button> Ajouter au panier </button>
+                <button><a href="/panier/add?id_produit={{produit.id}}">Ajouter au panier </a> </button>
             </div>
 
         {% endfor %}

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommandeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
@@ -16,8 +18,16 @@ class Commande
     #[ORM\Column(type: 'date')]
     private $date;
 
-    #[ORM\OneToOne(targetEntity: Panier::class, cascade: ['persist', 'remove'])]
-    private $id_panier;
+    #[ORM\OneToMany(mappedBy: 'id_commande', targetEntity: CommandeLine::class)]
+    private $commandeLines;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'commandes')]
+    private $id_user;
+
+    public function __construct()
+    {
+        $this->commandeLines = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -36,14 +46,44 @@ class Commande
         return $this;
     }
 
-    public function getIdPanier(): ?Panier
+    /**
+     * @return Collection|CommandeLine[]
+     */
+    public function getCommandeLines(): Collection
     {
-        return $this->id_panier;
+        return $this->commandeLines;
     }
 
-    public function setIdPanier(?Panier $id_panier): self
+    public function addCommandeLine(CommandeLine $commandeLine): self
     {
-        $this->id_panier = $id_panier;
+        if (!$this->commandeLines->contains($commandeLine)) {
+            $this->commandeLines[] = $commandeLine;
+            $commandeLine->setIdCommande($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommandeLine(CommandeLine $commandeLine): self
+    {
+        if ($this->commandeLines->removeElement($commandeLine)) {
+            // set the owning side to null (unless already changed)
+            if ($commandeLine->getIdCommande() === $this) {
+                $commandeLine->setIdCommande(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIdUser(): ?User
+    {
+        return $this->id_user;
+    }
+
+    public function setIdUser(?User $id_user): self
+    {
+        $this->id_user = $id_user;
 
         return $this;
     }

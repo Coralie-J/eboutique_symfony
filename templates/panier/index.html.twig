@@ -5,17 +5,33 @@
 {% block body %}
     <h1>Panier index</h1>
 
-    <table class="table">
+    {% if panier | length > 0 %}
 
-        <tbody>
+        <form method="POST" action="/panier/update">
 
-            {% for produit in panier %}
-                <tr>
-                    <td>{{ produit.IdProduit }}</td>
-                    <td>{{ produit.quantite }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <table class="table">
+
+                <tbody>
+
+                    {% for produit in panier %}
+                        <tr>
+                            <td>{{ produit.IdProduit.nom }}</td>
+                            <td><input type="number" value={{ produit.quantite }} name={{produit.IdProduit.id}}></td>
+                            <td>{{produit.IdProduit.prixUnitaire}} € </td>
+                            <td><button><a href="/panier/remove/?id_produit={{produit.IdProduit.id}}"> Supprimer </a> </button></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <input type="submit" value="Mettre à jour" />
+
+        </form>
+
+        <button><a href="/commande/new/"> Commander </a> </button>
+
+    {% else %}
+        <p> Il n'y a aucun article dans votre panier </p>
+    {% endif %}
 
 {% endblock %}

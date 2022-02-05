@@ -10,7 +10,6 @@
             <tr>
                 <th>Id</th>
                 <th>Date</th>
-                <th>actions</th>
             </tr>
         </thead>
         <tbody>
@@ -18,10 +17,10 @@
             <tr>
                 <td>{{ commande.id }}</td>
                 <td>{{ commande.date ? commande.date|date('Y-m-d') : '' }}</td>
-                <td>
-                    <a href="{{ path('commande_show', {'id': commande.id}) }}">show</a>
-                    <a href="{{ path('commande_edit', {'id': commande.id}) }}">edit</a>
-                </td>
+                <td>{{ commande.idUser.Adresses[0].adresse }} </td>
+                <td>{{ commande.idUser.Adresses[0].CodePostal }} </td>
+                <td>{{ commande.idUser.Adresses[0].ville }} </td>
+
             </tr>
         {% else %}
             <tr>
@@ -30,6 +29,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('commande_new') }}">Create new</a>
 {% endblock %}

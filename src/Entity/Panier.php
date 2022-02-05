@@ -83,4 +83,12 @@ class Panier
 
         return $this;
     }
+
+    public function removePanierLineByProduit($id_produit){
+        foreach ($this->panierLines as $panierLine){
+            if ($panierLine->getIdProduit()->getId() == $id_produit){
+                $this->panierLines->removeElement($panierLine);
+            }
+        }
+    }
 }

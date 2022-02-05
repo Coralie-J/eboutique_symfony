@@ -36,10 +36,14 @@ class User
     #[ORM\OneToMany(mappedBy: 'id_user', targetEntity: Adresse::class)]
     private $adresses;
 
+    #[ORM\OneToMany(mappedBy: 'id_user', targetEntity: Commande::class)]
+    private $commandes;
+
     public function __construct()
     {
         $this->paniers = new ArrayCollection();
         $this->adresses = new ArrayCollection();
+        $this->commandes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -169,5 +173,35 @@ class User
 
     public function __toString(){
         return $this->login;
+    }
+
+    /**
+     * @return Collection|Commande[]
+     */
+    public function getCommandes(): Collection
+    {
+        return $this->commandes;
+    }
+
+    public function addCommande(Commande $commande): self
+    {
+        if (!$this->commandes->contains($commande)) {
+            $this->commandes[] = $commande;
+            $commande->setIdUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommande(Commande $commande): self
+    {
+        if ($this->commandes->removeElement($commande)) {
+            // set the owning side to null (unless already changed)
+            if ($commande->getIdUser() === $this) {
+                $commande->setIdUser(null);
+            }
+        }
+
+        return $this;
     }
 }
