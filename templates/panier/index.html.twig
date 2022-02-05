@@ -6,7 +6,8 @@
     <h1>Panier index</h1>
 
     {% if panier | length > 0 %}
-
+        {% set montant = 0 %}
+        
         <form method="POST" action="/panier/update">
 
             <table class="table">
@@ -20,6 +21,9 @@
                             <td>{{produit.IdProduit.prixUnitaire}} € </td>
                             <td><button><a href="/panier/remove/?id_produit={{produit.IdProduit.id}}"> Supprimer </a> </button></td>
                         </tr>
+
+                        {% set montant = montant + (produit.IdProduit.prixUnitaire * produit.quantite) %}
+
                     {% endfor %}
                 </tbody>
             </table>
@@ -27,6 +31,8 @@
             <input type="submit" value="Mettre à jour" />
 
         </form>
+
+        <p> Montant de la commande : {{ montant }} € </p>
 
         <button><a href="/commande/new/"> Commander </a> </button>
 

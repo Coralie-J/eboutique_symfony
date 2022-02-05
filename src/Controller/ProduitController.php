@@ -37,7 +37,6 @@ class ProduitController extends AbstractController
         $categories = $req->getResult();
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // $produit->setDescription2()
             $entityManager->persist($produit);
             $entityManager->flush();
 
@@ -52,10 +51,14 @@ class ProduitController extends AbstractController
     }
 
     #[Route('/{id}', name: 'produit_show', methods: ['GET'])]
-    public function show(Produit $produit): Response
+    public function show(Produit $produit, EntityManagerInterface $entityManager): Response
     {
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
         return $this->render('produit/show.html.twig', [
             'produit' => $produit,
+            'categories' => $categories
         ]);
     }
 

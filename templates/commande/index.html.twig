@@ -15,18 +15,29 @@
         <tbody>
         {% for commande in commandes %}
             <tr>
-                <td>{{ commande.id }}</td>
-                <td>{{ commande.date ? commande.date|date('Y-m-d') : '' }}</td>
-                <td>{{ commande.idUser.Adresses[0].adresse }} </td>
-                <td>{{ commande.idUser.Adresses[0].CodePostal }} </td>
-                <td>{{ commande.idUser.Adresses[0].ville }} </td>
+                <td><a href="/commande/show/{{ commande.id }}"> Commande n°{{ commande.id }} </a></td>
+                <td>{{ commande.date ? commande.date|date('d/m/Y') : '' }}</td>
+
+                {% set montant = 0 %}
+
+                {% for commandeline in commande.commandeLines %}
+
+                    {% set montant = montant + (commandeline.IdProduit.prixUnitaire * commandeline.quantite) %}
+
+                {% endfor %}
+
+                <td> Montant de la commande : {{ montant }} € </td>
 
             </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
+
         {% endfor %}
+
+
         </tbody>
     </table>
+
+    <p>{{ user.Adresses[0].adresse }} </p>
+    <p>{{ user.Adresses[0].CodePostal }} </p>
+    <p>{{ user.Adresses[0].ville }} </p>
+
 {% endblock %}

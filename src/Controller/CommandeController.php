@@ -19,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CommandeController extends AbstractController
 {
     #[Route('/', name: 'commande_index', methods: ['GET'])]
-    public function index(CommandeRepository $commandeRepository, EntityManagerInterface $entityManager, Session $session): Response
+    public function index(CommandeRepository $commandeRepository, EntityManagerInterface $entityManager, Session $session, UserRepository $userRepo ): Response
     {
         $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
         $categories = $req->getResult();
@@ -28,6 +28,7 @@ class CommandeController extends AbstractController
             'commandes' => $commandeRepository->findBy([
                 'id_user' => $session->get('id'),
             ]),
+            'user' => $userRepo->find($session->get('id')),
             'categories' => $categories
         ]);
     }
@@ -62,7 +63,17 @@ class CommandeController extends AbstractController
         }
 
         return $this->redirectToRoute('commande_index', [], Response::HTTP_SEE_OTHER);
+    }
 
+    #[Route('/show/{id}', name: 'commande_show', methods: ['GET'])]
+    public function show(Commande $commande, EntityManagerInterface $entityManager){
+        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
+        $categories = $req->getResult();
+
+        return $this->render('commande/show.html.twig', [
+            'commandeLines' => $commande->getCommandeLines(),
+            'categories' => $categories
+        ]);
     }
 
 }
