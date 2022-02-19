@@ -7,11 +7,9 @@ use App\Repository\UserRepository;
 use App\Entity\CommandeLine;
 use App\Entity\Panier;
 use Symfony\Component\HttpFoundation\Session\Session;
-use App\Form\CommandeType;
 use App\Repository\CommandeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 

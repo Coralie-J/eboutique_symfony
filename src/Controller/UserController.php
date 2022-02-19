@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Entity\Adresse;
-use App\Repository\UserRepository;
 use App\Repository\ProduitRepository;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -65,10 +64,9 @@ class UserController extends AbstractController{
     }
 
     #[Route('/deconnexion', name: 'user_deconnexion', methods: ['GET', 'POST'])]
-    public function deconnexion(Session $session): Response {
+    public function deconnexion(Session $session): void {
         $session->remove('username');
         $session->remove('id');
-        return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
     }
 
 }

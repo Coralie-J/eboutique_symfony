@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Session\Session;
-use App\Repository\UserRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 
@@ -29,10 +28,10 @@ class CategorieController extends AbstractController
 
     #[Route('/new', name: 'categorie_new', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_ADMIN")]
-    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, Session $session, UserRepository $userRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, Session $session): Response
     {
        
-        try {
+        /*try {
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
         } catch(AccessDeniedException $e ){
             
@@ -41,7 +40,7 @@ class CategorieController extends AbstractController
             } else {
                 return $this->redirectToRoute('user_connexion', [], Response::HTTP_SEE_OTHER);
             }
-        }
+        }*/
 
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
@@ -72,6 +71,7 @@ class CategorieController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'categorie_edit', methods: ['GET', 'POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function edit(Request $request, Categorie $categorie, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(CategorieType::class, $categorie);
@@ -79,7 +79,6 @@ class CategorieController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
             return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
         }
 

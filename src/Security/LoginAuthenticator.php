@@ -37,11 +37,6 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $this->userRepository = $userRepository;
     }
 
-    /*public function supports(Request $request): bool
-    {
-        dd('la');
-    }*/
-
     public function getCredentials(Request $request)
     {
         $credentials = [
