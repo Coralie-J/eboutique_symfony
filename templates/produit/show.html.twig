@@ -2,30 +2,29 @@
 
 {% block title %}Produit{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/product.css" >
+{% endblock %}
+
 {% block body %}
-    <h1>Produit</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                {% for media in produit.media %}
-                    <td><img src={{ media.source }} alt={{media.alt}} class="img_produits"/> </td>
-                {% endfor %}
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ produit.nom }}</td>
-            </tr>
-            <tr>
-                <th>Prix_unitaire</th>
-                <td>{{ produit.prixUnitaire }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ produit.description2}}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div id="block_produit">
 
-    <button><a href="/panier/add?id_produit={{produit.id}}">Ajouter au panier </a></button>
+        <div id="photo">
+            {% for media in produit.media %}
+                <img src={{ media.source }} alt={{media.alt}} class="img_produits"/>
+            {% endfor %}
+        </div>
+
+        <div id="description">
+
+            <h2>{{ produit.nom }}</h2>
+            <p id="prix">{{ produit.prixUnitaire }} €</p>
+            <p>{{ produit.description2}}</p>
+
+            <button><a href="/panier/add?id_produit={{produit.id}}">Ajouter au panier </a></button>
+
+        </div>
+
+    </div>
 {% endblock %}

@@ -1,0 +1,25 @@
+#block_produit{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    margin-top: 50px;
+    width: 100%;
+}
+
+#photo{
+    width: 20%;
+}
+
+.img_produits{
+    width: 100%;
+}
+
+#prix{
+    font-size: 20px;
+}
+
+#description{
+    width: 50%;
+    margin-left: 20px;
+}

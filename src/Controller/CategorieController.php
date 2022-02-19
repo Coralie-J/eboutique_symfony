@@ -10,6 +10,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\Session\Session;
+use App\Repository\UserRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
 
 #[Route('/categorie')]
 class CategorieController extends AbstractController
@@ -23,14 +28,24 @@ class CategorieController extends AbstractController
     }
 
     #[Route('/new', name: 'categorie_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[IsGranted("ROLE_ADMIN")]
+    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, Session $session, UserRepository $userRepository): Response
     {
+       
+        try {
+            $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        } catch(AccessDeniedException $e ){
+            
+            if ($session->get('username')){
+                return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
+            } else {
+                return $this->redirectToRoute('user_connexion', [], Response::HTTP_SEE_OTHER);
+            }
+        }
+
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
-
-        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
-        $categories = $req->getResult();
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($categorie);
@@ -41,22 +56,18 @@ class CategorieController extends AbstractController
 
         return $this->renderForm('categorie/new.html.twig', [
             'categorie' => $categorie,
-            'categories' => $categories,
+            'categories' => $categorieRepository->findAll(),
             'form' => $form,
         ]);
     }
 
     #[Route('/{id}', name: 'categorie_show', methods: ['GET'])]
-    public function show(Categorie $categorie, EntityManagerInterface $entityManager): Response
+    public function show(Categorie $categorie, CategorieRepository $categorieRepository): Response
     {
-
-        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
-        $categories = $req->getResult();
-
         return $this->render('categorie/show_products.html.twig', [
             'categorie' => $categorie,
             'produits' => $categorie->getProduits(),
-            'categories'=> $categories
+            'categories'=> $categorieRepository->findAll()
         ]);
     }
 

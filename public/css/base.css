@@ -4,10 +4,33 @@
     justify-content: space-between;
     flex-direction: row;
     flex-wrap: nowrap;
+    margin: 0px;
+    background-color: #F87060;
+}
+
+*{
+    box-sizing: border-box;
 }
 
 #logo{
-    width: 3%;
+    width: 3.5%;
+    vertical-align: bottom;
+}
+
+#bandeau h1{
+    font-size: 20px;
+}
+
+#gestion_user{
+    text-align: center;
+    padding: 17px;
+    padding-right: 0;
+}
+
+#gestion_user a {
+    padding: 17px;
+    text-decoration: none;
+    border: 1px solid black;
 }
 
 #categories_menu{
@@ -35,11 +58,6 @@
 .link{
     text-decoration: none;
     color: black;
-}
-
-.link_menu{
-    padding: 20px;
-    padding-top: 50px;
 }
 
 footer{

@@ -5,28 +5,29 @@ namespace App\Controller;
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
+use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
 #[Route('/produit')]
 class ProduitController extends AbstractController
 {
     #[Route('/', name: 'produit_index', methods: ['GET'])]
-    public function index(ProduitRepository $produitRepository, EntityManagerInterface $entityManager): Response
+    public function index(ProduitRepository $produitRepository, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
     {
-        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
-        $categories = $req->getResult();
 
         return $this->render('produit/index.html.twig', [
             'produits' => $produitRepository->findAll(),
-            'categories' => $categories
+            'categories' => $categorieRepository->findAll()
         ]);
     }
 
     #[Route('/new', name: 'produit_new', methods: ['GET', 'POST'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $produit = new Produit();

@@ -17,11 +17,14 @@
     <header>
 
         <div id="bandeau">
-            <img src="/images/logo.png" alt="logo" id="logo" />
+            <h1><a href="/user" class="link"><img src="/images/music_note.png" alt="logo" id="logo"/> Music shop </a></h1>
 
-            <div>
+            <div id="gestion_user">
                 {% if app.session.get('username') %}
-
+                    {% if is_granted('ROLE_ADMIN') %}
+                            <a href="/categorie/new/">Categories</a>
+                            <a href="/produit/new/">Produit</a>
+                    {% endif %}
                     <a href="/commande" class="link_menu"> {{ app.session.get('username') }} </a>
                     <a href="/panier"  class="link_menu"> Panier </a>
                     <a href="/user/deconnexion" class="link_menu"> Déconnexion </a>
@@ -29,7 +32,7 @@
                 {% else %}
                     <a href="/user/new" class="link_menu">Créer un compte </a>
                     <a href="/panier"  class="link_menu"> Panier </a>
-                    <a href="/user/connexion" class="link_menu"> Connexion </a>
+                    <a href="/login" class="link_menu"> Connexion </a>
 
                 {% endif %}
             </div>
@@ -37,7 +40,6 @@
 
         <div id="categories_menu">
             <ul id="menu">
-                <li class="item_menu"><a href="/user" class="link"> Tous nos produits </a></li>
                 {% for categorie in categories %}
                     <li class="item_menu"><a href="/categorie/{{categorie.id}}" class="link"> {{ categorie.nom }} </a></li>
                 {% else %}
