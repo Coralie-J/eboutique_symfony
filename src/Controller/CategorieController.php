@@ -10,7 +10,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
@@ -31,17 +30,6 @@ class CategorieController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, Session $session): Response
     {
        
-        /*try {
-            $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        } catch(AccessDeniedException $e ){
-            
-            if ($session->get('username')){
-                return $this->redirectToRoute('user_index', [], Response::HTTP_SEE_OTHER);
-            } else {
-                return $this->redirectToRoute('user_connexion', [], Response::HTTP_SEE_OTHER);
-            }
-        }*/
-
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
@@ -72,7 +60,7 @@ class CategorieController extends AbstractController
 
     #[Route('/{id}/edit', name: 'categorie_edit', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_ADMIN")]
-    public function edit(Request $request, Categorie $categorie, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Categorie $categorie, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
     {
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
@@ -83,6 +71,7 @@ class CategorieController extends AbstractController
         }
 
         return $this->renderForm('categorie/edit.html.twig', [
+            'categories' => $categorieRepository->findAll(),
             'categorie' => $categorie,
             'form' => $form,
         ]);

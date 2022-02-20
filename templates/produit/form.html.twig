@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajout de produit{% endblock %}
+
+{% block body %}
+
+    <form action="/produit/new" method="POST">
+
+        <p>
+            <label for="nom">Nom </label>
+            <input type="text" name="nom">
+        </p>
+
+        <p>
+            <label for="interprete">Interprète </label>
+            <input type="text" name="interprete" >
+        </p>
+
+        <p>
+            <label for="prix">Prix unitaire </label>
+            <input  type="number" step="0.01" name="prix" >
+        </p>
+
+        <p>
+            <label for="disponibilite">Disponibilité</label>
+            <input type="checkbox" name="disponibilite" value="dispo">
+        </p>
+
+        <p>
+            <label for="description">Description </label>
+            <textarea name="description" > </textarea>
+        </p>
+
+        <p>
+            <label for="code_postal">Catégorie </label>
+            <select name="type_categorie">
+                {% for categorie in categories %}
+                    <option value={{ categorie.nom }}>{{ categorie.nom }}</option>
+                {% endfor %}
+            </select>
+        </p>
+
+        <p>
+            <label for="source">Source de l'image </label>
+            <input type="text" name="source" >
+        </p>
+
+        <p>
+            <label for="alt">Texte alternatif de l'image </label>
+            <input type="text" name="alt" >
+        </p>
+
+        <input type="submit" value="Save"/>
+
+    </form>
+
+    <a href="/produit/">Voir la liste des produits</a>
+
+{% endblock %}

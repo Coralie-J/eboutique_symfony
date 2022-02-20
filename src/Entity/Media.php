@@ -13,13 +13,13 @@ class Media
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
+    #[ORM\Column(type: 'text')]
     private $source;
 
     #[ORM\Column(type: 'string', length: 60)]
     private $alt;
 
-    #[ORM\ManyToOne(targetEntity: Produit::class, inversedBy: 'media')]
+    #[ORM\OneToOne(targetEntity: Produit::class, inversedBy: 'media')]
     #[ORM\JoinColumn(nullable: false)]
     private $id_produit;
 

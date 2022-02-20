@@ -2,10 +2,14 @@
 
 {% block title %}Produit index{% endblock %}
 
+{% block stylesheets %}
+        <link rel="stylesheet" href="/css/admin_all_products.css" />
+{% endblock %}
+
 {% block body %}
     <h1>Produit index</h1>
 
-    <table class="table">
+    <table id="table">
         <thead>
             <tr>
                 <th>Id</th>
@@ -14,6 +18,8 @@
                 <th>Disponibilite</th>
                 <th>Type categorie </th>
                 <th>Interprète </th>
+                <th>Source des medias </th>
+                <th>Texte alternatif du media </th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -22,13 +28,20 @@
             <tr>
                 <td>{{ produit.id }}</td>
                 <td>{{ produit.nom }}</td>
-                <td>{{ produit.prixUnitaire }}</td>
+                <td>{{ produit.prixUnitaire }} €</td>
                 <td>{{ produit.disponibilite ? 'Yes' : 'No' }}</td>
                 <td>{{ produit.TypeCategorie }}</td>
                 <td>{{ produit.interprete }}</td>
-                <td>
-                    <a href="{{ path('produit_show', {'id': produit.id}) }}">show</a>
-                    <a href="{{ path('produit_edit', {'id': produit.id}) }}">edit</a>
+
+                <td class="media_source"><a href="{{produit.media.source}}">{{produit.media.source}}</a></td>
+
+                <td>{{produit.media.alt}}</td>
+                
+                <td class="action_cell">
+                    <div class="action_div">
+                        <a href="{{ path('produit_show', {'id': produit.id}) }}" >show</a>
+                        <a href="{{ path('produit_edit', {'id': produit.id}) }}" >edit</a>
+                    </div>
                 </td>
             </tr>
         {% else %}
@@ -38,6 +51,8 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('produit_new') }}">Create new</a>
+    
+    <div id="lien_creation">
+        <a href="{{ path('produit_new') }}">Create new</a>
+    </div>
 {% endblock %}

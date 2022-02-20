@@ -4,12 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Panier;
 use App\Entity\PanierLine;
-use App\Entity\Produit;
-use App\Form\PanierType;
-use App\Repository\PanierRepository;
-use App\Repository\UserRepository;
+
 use App\Repository\ProduitRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CategorieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,8 +31,7 @@ class PanierController extends AbstractController
     }
 
     #[Route('/add', name: 'panier_add', methods: ['GET'])]
-
-    public function add(Request $request, ProduitRepository $produitRepository, EntityManagerInterface $entityManager, Session $session): Response
+    public function add(Request $request, ProduitRepository $produitRepository, Session $session): Response
     {
 
         if (! $session->get("panier")){

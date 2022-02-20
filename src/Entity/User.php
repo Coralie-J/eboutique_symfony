@@ -23,9 +23,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
-    #[ORM\Column(type: 'string', length: 60)]
-    private $login;
-
     #[ORM\Column(type: 'text')]
     private $password;
 
@@ -121,18 +118,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getLogin(): ?string
-    {
-        return $this->login;
-    }
-
-    public function setLogin(string $login): self
-    {
-        $this->login = $login;
-
-        return $this;
-    }
-
     public function getNom(): ?string
     {
         return $this->nom;
@@ -217,11 +202,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function __toString()
-    {
-        return $this->login;
-    }
-
     /**
      * @return Collection|Commande[]
      */
@@ -254,6 +234,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function isAdmin(): bool {
         return in_array("ROLE_ADMIN", $this->roles);
-        // return in_array("ROLE_ADMIN", $this->roles);
     }
 }

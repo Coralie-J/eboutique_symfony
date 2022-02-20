@@ -1,0 +1,28 @@
+#lien_creation{
+    padding: 10px;
+    width: 98%;
+    margin-top: 20px;
+}
+
+td {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+th {
+    padding: 10px;
+    border: 1px solid black;
+}
+
+.action_div{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.media_source{
+    width: 30%;
+}
+

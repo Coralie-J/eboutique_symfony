@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Commande;
 use App\Repository\UserRepository;
+use App\Repository\CategorieRepository;
 use App\Entity\CommandeLine;
 use App\Entity\Panier;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -12,32 +13,29 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+
 
 #[Route('/commande')]
+#[IsGranted("ROLE_USER")]
 class CommandeController extends AbstractController
 {
     #[Route('/', name: 'commande_index', methods: ['GET'])]
-    public function index(CommandeRepository $commandeRepository, EntityManagerInterface $entityManager, Session $session, UserRepository $userRepo ): Response
+    public function index(CommandeRepository $commandeRepository, CategorieRepository $categorieRepository, Session $session, UserRepository $userRepo ): Response
     {
-        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
-        $categories = $req->getResult();
 
         return $this->render('commande/index.html.twig', [
             'commandes' => $commandeRepository->findBy([
                 'id_user' => $session->get('id'),
             ]),
             'user' => $userRepo->find($session->get('id')),
-            'categories' => $categories
+            'categories' =>  $categorieRepository->findAll()
         ]);
     }
 
     #[Route('/new', name: 'commande_new', methods: ['POST', 'GET'])]
     public function new(EntityManagerInterface $entityManager, Session $session, UserRepository $userRepo): Response
     {
-
-        if (! $session->get('username')){
-            return $this->redirectToRoute('user_connexion', [], Response::HTTP_SEE_OTHER);
-        }
 
         if ($session->get("panier")){
             $commande = new Commande();
@@ -64,13 +62,12 @@ class CommandeController extends AbstractController
     }
 
     #[Route('/show/{id}', name: 'commande_show', methods: ['GET'])]
-    public function show(Commande $commande, EntityManagerInterface $entityManager){
-        $req = $entityManager->createQuery('SELECT c FROM App\Entity\Categorie c');
-        $categories = $req->getResult();
+    public function show(Commande $commande, CategorieRepository $categorieRepository){
 
         return $this->render('commande/show.html.twig', [
             'commandeLines' => $commande->getCommandeLines(),
-            'categories' => $categories
+            'commande' => $commande,
+            'categories' => $categorieRepository->findAll()
         ]);
     }
 

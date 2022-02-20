@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Media;
 use App\Entity\Produit;
-use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class ProduitController extends AbstractController
 {
     #[Route('/', name: 'produit_index', methods: ['GET'])]
+    #[IsGranted("ROLE_ADMIN")]
     public function index(ProduitRepository $produitRepository, CategorieRepository $categorieRepository): Response
     {
 
@@ -31,19 +32,32 @@ class ProduitController extends AbstractController
     public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
     {
         $produit = new Produit();
-        $form = $this->createForm(ProduitType::class, $produit);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->getMethod() === "POST"){
+            $categorie = $categorieRepository->findOneBy(["nom" => $request->request->get('type_categorie')]);
+
+            $produit->setDescription($request->request->get("description"));
+            $produit->setInterprete($request->request->get("interprete"));
+            $produit->setNom($request->request->get("nom"));
+            $produit->setPrixUnitaire($request->request->get("prix"));
+            $produit->setTypeCategorie($categorie);
+            $produit->setDisponibilite($request->request->get("disponibilite") == "dispo" ? true : false );
+
+            $media = new Media();
+            $media->setAlt($request->request->get("alt"));
+            $media->setSource($request->request->get("source"));
+            $media->setIdProduit($produit);
+            $produit->setMedia($media);
+
             $entityManager->persist($produit);
+            $entityManager->persist($media);
             $entityManager->flush();
 
             return $this->redirectToRoute('produit_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('produit/new.html.twig', [
+        return $this->render('produit/form.html.twig', [
             'produit' => $produit,
-            'form' => $form,
             'categories' => $categorieRepository->findAll()
         ]);
     }
@@ -62,18 +76,32 @@ class ProduitController extends AbstractController
     #[IsGranted("ROLE_ADMIN")]
     public function edit(Request $request, Produit $produit, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
     {
-        $form = $this->createForm(ProduitType::class, $produit);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($request->getMethod() === "POST"){
+            $categorie = $categorieRepository->find($request->request->get('type_categorie'));
+
+            $produit->setDescription($request->request->get("description"));
+            $produit->setInterprete($request->request->get("interprete"));
+            $produit->setNom($request->request->get("nom"));
+            $produit->setPrixUnitaire($request->request->get("prix"));
+            $produit->setTypeCategorie($categorie);
+            $produit->setDisponibilite($request->request->get("disponibilite") == "dispo" ? true : false);
+            
+            $media = $produit->getMedia();
+            $produit->getMedia()->setAlt($request->request->get("alt_" . strval($media->getId())));
+            $produit->getMedia()->setSource($request->request->get("source_" . strval($media->getId())));
+            $entityManager->persist($media);
+            
+            
+            $entityManager->persist($produit);
             $entityManager->flush();
-
             return $this->redirectToRoute('produit_index', [], Response::HTTP_SEE_OTHER);
+
         }
+        
 
         return $this->renderForm('produit/edit.html.twig', [
             'produit' => $produit,
-            'form' => $form,
             'categories' => $categorieRepository->findAll()
         ]);
     }
@@ -83,6 +111,7 @@ class ProduitController extends AbstractController
     public function delete(Request $request, Produit $produit, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$produit->getId(), $request->request->get('_token'))) {
+            $entityManager->remove($produit->getMedia());
             $entityManager->remove($produit);
             $entityManager->flush();
         }

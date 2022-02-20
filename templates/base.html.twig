@@ -17,22 +17,22 @@
     <header>
 
         <div id="bandeau">
-            <h1><a href="/user" class="link"><img src="/images/music_note.png" alt="logo" id="logo"/> Music shop </a></h1>
+            <h1><a href="/home" class="link"><img src="/images/music_note.png" alt="logo" id="logo"/> Music shop </a></h1>
 
             <div id="gestion_user">
                 {% if app.session.get('username') %}
                     {% if is_granted('ROLE_ADMIN') %}
-                            <a href="/categorie/new/">Categories</a>
-                            <a href="/produit/new/">Produit</a>
+                            <a href="/categorie/">Gérer les catégories</a>
+                            <a href="/produit/">Gérer des produits</a>
                     {% endif %}
                     <a href="/commande" class="link_menu"> {{ app.session.get('username') }} </a>
                     <a href="/panier"  class="link_menu"> Panier </a>
-                    <a href="/user/deconnexion" class="link_menu"> Déconnexion </a>
+                    <a href="/user/logout" class="link_menu"> Déconnexion </a>
 
                 {% else %}
                     <a href="/user/new" class="link_menu">Créer un compte </a>
                     <a href="/panier"  class="link_menu"> Panier </a>
-                    <a href="/login" class="link_menu"> Connexion </a>
+                    <a href="/user/login" class="link_menu"> Connexion </a>
 
                 {% endif %}
             </div>

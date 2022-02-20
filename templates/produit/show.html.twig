@@ -11,16 +11,14 @@
     <div id="block_produit">
 
         <div id="photo">
-            {% for media in produit.media %}
-                <img src={{ media.source }} alt={{media.alt}} class="img_produits"/>
-            {% endfor %}
+                <img src={{ produit.media.source }} alt={{produit.media.alt}} class="img_produits"/>
         </div>
 
         <div id="description">
 
             <h2>{{ produit.nom }}</h2>
             <p id="prix">{{ produit.prixUnitaire }} €</p>
-            <p>{{ produit.description2}}</p>
+            <p>{{ produit.description}}</p>
 
             <button><a href="/panier/add?id_produit={{produit.id}}">Ajouter au panier </a></button>
 

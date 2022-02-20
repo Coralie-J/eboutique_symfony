@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ProduitRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
@@ -28,22 +26,14 @@ class Produit
     #[ORM\Column(type: 'boolean')]
     private $disponibilite;
 
-    #[ORM\OneToMany(mappedBy: 'id_produit', targetEntity: Media::class)]
+    #[ORM\OneToOne(mappedBy: 'id_produit', targetEntity: Media::class)]
     private $media;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: 'text')]
     private $description;
 
-    #[ORM\Column(type: 'text')]
-    private $description2;
-
-    #[ORM\Column(type: 'string', length: 70, nullable: true)]
+    #[ORM\Column(type: 'string', length: 70)]
     private $interprete;
-
-    public function __construct()
-    {
-        $this->media = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -98,34 +88,15 @@ class Produit
         return $this;
     }
 
-    /**
-     * @return Collection|Media[]
-     */
-    public function getMedia(): Collection
+
+    public function getMedia(): Media
     {
         return $this->media;
     }
 
-    public function addMedium(Media $medium): self
+    public function setMedia(Media $media)
     {
-        if (!$this->media->contains($medium)) {
-            $this->media[] = $medium;
-            $medium->setIdProduit($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMedium(Media $medium): self
-    {
-        if ($this->media->removeElement($medium)) {
-            // set the owning side to null (unless already changed)
-            if ($medium->getIdProduit() === $this) {
-                $medium->setIdProduit(null);
-            }
-        }
-
-        return $this;
+        $this->media = $media;
     }
 
     public function getDescription(): ?string
@@ -133,21 +104,9 @@ class Produit
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description2): self
     {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getDescription2(): ?string
-    {
-        return $this->description2;
-    }
-
-    public function setDescription2(string $description2): self
-    {
-        $this->description2 = $description2;
+        $this->description = $description2;
 
         return $this;
     }
@@ -162,5 +121,10 @@ class Produit
         $this->interprete = $interprete;
 
         return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->nom;
     }
 }
