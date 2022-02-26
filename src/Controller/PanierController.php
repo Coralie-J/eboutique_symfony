@@ -52,7 +52,7 @@ class PanierController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('panier_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/update', name: 'panier_update', methods: ['POST'])]

@@ -19,6 +19,15 @@
         <div id="bandeau">
             <h1><a href="/home" class="link"><img src="/images/music_note.png" alt="logo" id="logo"/> Music shop </a></h1>
 
+            {% set nb_items_paniers = 0 %}
+
+            {% if app.session.get('panier') %}
+
+                {% for article in app.session.get('panier').PanierLines %}
+                    {% set nb_items_paniers = nb_items_paniers + article.Quantite %}
+                {% endfor %}
+            {% endif %}
+
             <div id="gestion_user">
                 {% if app.session.get('username') %}
                     {% if is_granted('ROLE_ADMIN') %}
@@ -26,12 +35,12 @@
                             <a href="/produit/">Gérer des produits</a>
                     {% endif %}
                     <a href="/commande" class="link_menu"> {{ app.session.get('username') }} </a>
-                    <a href="/panier"  class="link_menu"> Panier </a>
+                    <a href="/panier"  class="link_menu"> Panier {{ nb_items_paniers }} </a>
                     <a href="/user/logout" class="link_menu"> Déconnexion </a>
 
                 {% else %}
                     <a href="/user/new" class="link_menu">Créer un compte </a>
-                    <a href="/panier"  class="link_menu"> Panier </a>
+                    <a href="/panier"  class="link_menu"> Panier {{ nb_items_paniers }} </a>
                     <a href="/user/login" class="link_menu"> Connexion </a>
 
                 {% endif %}
