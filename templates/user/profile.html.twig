@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre profil{% endblock %}
+
+{% block body %}
+
+    <h1>Vos informations</h1>
+
+
+    <p> Nom : {{user.nom}} </p>
+    <p> Prénom : {{ user.prenom }} </p>
+    <p> Email : {{user.email}} </p>
+
+    <table>
+        {% for adresse in user.Adresses %}
+            <tr>
+                <td> {{ adresse.adresse }} </td>
+                <td> {{ adresse.CodePostal }} </td>
+                <td> {{ adresse.ville }} </td>
+            </tr>
+
+        {% endfor %}
+
+    </table>
+
+
+    <a href="/user/update/{{user.id}}"> Mettre à jour mon profil </a>
+
+{% endblock %}

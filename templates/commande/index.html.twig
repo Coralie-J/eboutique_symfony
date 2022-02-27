@@ -1,49 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Commande index{% endblock %}
+{% block title %}Vos commandes{% endblock %}
 
 {% block body %}
-    <h1>Commande index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% if commandes | length > 0 %}
-            {% for commande in commandes %}
+    <h1>Vos commandes</h1>
+
+    {% if commandes | length > 0 %}
+
+        <table class="table">
+            <thead>
                 <tr>
-                    <td><a href="/commande/show/{{ commande.id }}"> Commande n°{{ commande.id }} </a></td>
-                    <td>{{ commande.date ? commande.date|date('d/m/Y') : '' }}</td>
-
-                    {% set montant = 0 %}
-
-                    {% for commandeline in commande.commandeLines %}
-
-                        {% set montant = montant + (commandeline.IdProduit.prixUnitaire * commandeline.quantite) %}
-
-                    {% endfor %}
-
-                    <td> Montant de la commande : {{ montant }} € </td>
-
+                    <th>Id</th>
+                    <th>Date</th>
+                    <th>Montant de la commande</th>
                 </tr>
+            </thead>
+            <tbody>
+                {% for commande in commandes %}
+                    <tr>
+                        <td><a href="/commande/show/{{ commande.id }}"> Commande n°{{ commande.id }} </a></td>
+                        <td>{{ commande.date ? commande.date|date('d/m/Y') : '' }}</td>
 
-            {% endfor %}
+                        {% set montant = 0 %}
+
+                        {% for commandeline in commande.commandeLines %}
+
+                            {% set montant = montant + (commandeline.IdProduit.prixUnitaire * commandeline.quantite) %}
+
+                        {% endfor %}
+
+                        <td> {{ montant }} € </td>
+
+                    </tr>
+
+                {% endfor %}
 
 
             </tbody>
         </table>
 
-        <p>{{ user.Adresses[0].adresse }} </p>
-        <p>{{ user.Adresses[0].CodePostal }} </p>
-        <p>{{ user.Adresses[0].ville }} </p>
-
     {% else %}
         <p> Vous n'avez passé aucune commande </p>
-
     {% endif %}
 
 {% endblock %}

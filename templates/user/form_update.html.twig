@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mise à jour de votre compte{% endblock %}
+
+{% block body %}
+
+    <form action="/user/update/{{user.id}}" method="POST">
+
+        <p>
+            <label for="nom">Nom </label>
+            <input type="text" name="nom" value="{{user.nom}}">
+        </p>
+
+        <p>
+            <label for="prenom">Prénom </label>
+            <input type="text" name="prenom" value="{{user.prenom}}">
+        </p>
+
+        <p>
+            <label for="email">Email </label>
+            <input type="text" name="email" value="{{user.email}}">
+        </p>
+
+        <p>
+            <label for="password">Password </label>
+            <input type="password" name="password" value="{{user.email}}">
+        </p>
+
+        {% set i = 0 %}
+        {% for adresse in user.Adresses %}
+
+
+            <p>
+                <label for="adresse">Adresse </label>
+                <input type="text" name="adresse{{i}}" value="{{adresse.adresse}}">
+            </p>
+
+            <p>
+                <label for="code_postal">Code postal </label>
+                <input type="number" name="code_postal{{i}}" value="{{adresse.CodePostal}}">
+            </p>
+
+            <p>
+                <label for="ville">Ville </label>
+                <input type="text" name="ville{{i}}" value="{{adresse.Ville}}">
+            </p>
+
+            {% set i = i + 1 %}
+        
+        {% endfor %}
+
+        <input type="submit" value="Save"/>
+
+    </form>
+
+{% endblock %}

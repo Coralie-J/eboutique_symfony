@@ -34,7 +34,8 @@
                             <a href="/categorie/">Gérer les catégories</a>
                             <a href="/produit/">Gérer des produits</a>
                     {% endif %}
-                    <a href="/commande" class="link_menu"> {{ app.session.get('username') }} </a>
+                    <a href="/user/profile" class="link_menu"> {{ app.session.get('username') }} </a>
+                    <a href="/commande" class="link_menu"> Vos commandes </a>
                     <a href="/panier"  class="link_menu"> Panier {{ nb_items_paniers }} </a>
                     <a href="/user/logout" class="link_menu"> Déconnexion </a>
 

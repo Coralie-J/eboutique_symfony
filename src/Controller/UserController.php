@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Entity\Adresse;
 use App\Repository\CategorieRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -71,8 +72,53 @@ class UserController extends AbstractController{
         $session->remove('username');
         $session->remove('useremail');
         $session->remove('userid');
-        // $session->get("panier") = $session->get("panier");
         return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/update/{id}', name: 'user_update', methods: ['GET','POST'])]
+    public function update(User $user, CategorieRepository $categorieRepository, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response {
+
+        if ($request->getMethod() === "POST" ){
+
+            $user->setPrenom($request->request->get('prenom'));
+            $user->setNom($request->request->get('nom'));
+            $user->setEmail($request->request->get('email'));
+
+            $hashedPassword = $passwordHasher->hashPassword($user, $_POST['password']);
+            $user->setPassword($hashedPassword);
+
+
+            for ($i=0; $i < $user->getAdresses()->count(); $i++){
+                $user->getAdresses()[$i]->setVille($request->request->get('ville'.$i));
+                $user->getAdresses()[$i]->setCodePostal($request->request->get('code_postal'. $i));
+                $user->getAdresses()[$i]->setAdresse($request->request->get('adresse'. $i));
+            }
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('user_profile', [], Response::HTTP_SEE_OTHER);
+
+        }
+
+        return $this->render('user/form_update.html.twig', [
+            'user' => $user,
+            'categories' => $categorieRepository->findAll()
+        ]);
+    }
+
+    #[Route('/profile', name: 'user_profile', methods: ['GET'])]
+    public function index(CategorieRepository $categorieRepository, Session $session, UserRepository $userRepo): Response
+    {
+
+        $user = $userRepo->findOneBy(['email' => $session->get("useremail")]);
+
+        return $this->render('user/profile.html.twig', [
+            'user' => $user,
+            'categories' =>  $categorieRepository->findAll()
+        ]);
+    }
+
+
 
 }
