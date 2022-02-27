@@ -56,7 +56,8 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $user = $this->userRepository->findOneBy(['email' => $username]);
 
         if ($user) {
-            $request->getSession()->set('id', $user->getId());
+            $request->getSession()->set('userid', $user->getId());
+            $request->getSession()->set('useremail', $username);
             $request->getSession()->set('username', $user->getPrenom());
         }
 

@@ -26,9 +26,9 @@ class CommandeController extends AbstractController
 
         return $this->render('commande/index.html.twig', [
             'commandes' => $commandeRepository->findBy([
-                'id_user' => $session->get('id'),
+                'id_user' => $session->get('userid'),
             ]),
-            'user' => $userRepo->find($session->get('id')),
+            'user' => $userRepo->find($session->get('userid')),
             'categories' =>  $categorieRepository->findAll()
         ]);
     }

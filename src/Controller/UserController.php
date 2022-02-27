@@ -69,7 +69,9 @@ class UserController extends AbstractController{
     #[Route('/logout', name: 'user_logout', methods: ['GET', 'POST'])]
     public function deconnexion(Session $session): Response {
         $session->remove('username');
-        $session->remove('id');
+        $session->remove('useremail');
+        $session->remove('userid');
+        // $session->get("panier") = $session->get("panier");
         return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
     }
 
