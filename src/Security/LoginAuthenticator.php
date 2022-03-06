@@ -13,8 +13,8 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
-use App\Repository\UserRepository;
-use App\Entity\User;
+use App\Repository\User2Repository;
+use App\Entity\User2;
 
 
 class LoginAuthenticator extends AbstractLoginFormAuthenticator
@@ -24,9 +24,9 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
     public const LOGIN_ROUTE = 'user_login';
 
     private UrlGeneratorInterface $urlGenerator;
-    private UserRepository $userRepository;
+    private User2Repository $userRepository;
     
-    public function __construct(UrlGeneratorInterface $urlGenerator, UserRepository $userRepository)
+    public function __construct(UrlGeneratorInterface $urlGenerator, User2Repository $userRepository)
     {
         $this->urlGenerator = $urlGenerator;
         $this->userRepository = $userRepository;
@@ -53,14 +53,6 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
         $password = $request->request->get('password');
         $username = $request->request->get('email');
 
-        $user = $this->userRepository->findOneBy(['email' => $username]);
-
-        if ($user) {
-            $request->getSession()->set('userid', $user->getId());
-            $request->getSession()->set('useremail', $username);
-            $request->getSession()->set('username', $user->getPrenom());
-        }
-
         return new Passport(
             new UserBadge($username),
             new PasswordCredentials($password)
@@ -69,6 +61,16 @@ class LoginAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $username = $request->request->get('email');
+        
+        $user = $this->userRepository->findOneBy(['email' => $username]);
+
+        if ($user) {
+            $request->getSession()->set('userid', $user->getId());
+            $request->getSession()->set('useremail', $username);
+            $request->getSession()->set('username', $user->getPrenom());
+        }
+
         return new RedirectResponse($this->urlGenerator->generate('home'));
     }
 

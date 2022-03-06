@@ -21,7 +21,7 @@ class Commande
     #[ORM\OneToMany(mappedBy: 'id_commande', targetEntity: CommandeLine::class)]
     private $commandeLines;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'commandes')]
+    #[ORM\ManyToOne(targetEntity: User2::class, inversedBy: 'commandes')]
     private $id_user;
 
     public function __construct()
@@ -76,12 +76,12 @@ class Commande
         return $this;
     }
 
-    public function getIdUser(): ?User
+    public function getIdUser(): ?User2
     {
         return $this->id_user;
     }
 
-    public function setIdUser(?User $id_user): self
+    public function setIdUser(?User2 $id_user): self
     {
         $this->id_user = $id_user;
 

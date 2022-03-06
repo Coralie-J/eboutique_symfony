@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Commande;
-use App\Repository\UserRepository;
+use App\Repository\User2Repository;
 use App\Repository\CategorieRepository;
 use App\Entity\CommandeLine;
 use App\Entity\Panier;
@@ -21,7 +21,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 class CommandeController extends AbstractController
 {
     #[Route('/', name: 'commande_index', methods: ['GET'])]
-    public function index(CommandeRepository $commandeRepository, CategorieRepository $categorieRepository, Session $session, UserRepository $userRepo ): Response
+    public function index(CommandeRepository $commandeRepository, CategorieRepository $categorieRepository, Session $session, User2Repository $userRepo ): Response
     {
 
         return $this->render('commande/index.html.twig', [
@@ -34,13 +34,13 @@ class CommandeController extends AbstractController
     }
 
     #[Route('/new', name: 'commande_new', methods: ['POST', 'GET'])]
-    public function new(EntityManagerInterface $entityManager, Session $session, UserRepository $userRepo): Response
+    public function new(EntityManagerInterface $entityManager, Session $session, User2Repository $userRepo): Response
     {
 
         if ($session->get("panier")){
             $commande = new Commande();
             $commande->setDate(new \DateTime());
-            $commande->setIdUser($userRepo->find($session->get('id')));
+            $commande->setIdUser($userRepo->find($session->get('userid')));
 
             foreach($session->get("panier")->getPanierLines() as $panierline){
 

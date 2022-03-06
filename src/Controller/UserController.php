@@ -2,10 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+
 use App\Entity\Adresse;
+use App\Entity\User2;
 use App\Repository\CategorieRepository;
-use App\Repository\UserRepository;
+use App\Repository\User2Repository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +23,7 @@ class UserController extends AbstractController{
     #[Route('/new', name: 'user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, UserPasswordHasherInterface $passwordHasher): Response
     {
-        $user = new User();
+        $user = new User2();
 
         if ($request->getMethod() === 'POST'){
             $user->setNom($_POST['nom']);
@@ -75,8 +76,10 @@ class UserController extends AbstractController{
         return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/update/{id}', name: 'user_update', methods: ['GET','POST'])]
-    public function update(User $user, CategorieRepository $categorieRepository, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response {
+    #[Route('/update/', name: 'user_update', methods: ['GET','POST'])]
+    public function update(User2Repository $userRepo, CategorieRepository $categorieRepository, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response {
+
+        $user = $userRepo->findOneBy(["email" => $request->getSession()->get('useremail')]);
 
         if ($request->getMethod() === "POST" ){
 
@@ -84,8 +87,10 @@ class UserController extends AbstractController{
             $user->setNom($request->request->get('nom'));
             $user->setEmail($request->request->get('email'));
 
-            $hashedPassword = $passwordHasher->hashPassword($user, $_POST['password']);
-            $user->setPassword($hashedPassword);
+            $request->getSession()->set('username', $user->getPrenom());
+
+            # $hashedPassword = $passwordHasher->hashPassword($user, $_POST['password']);
+            # $user->setPassword($hashedPassword);
 
 
             for ($i=0; $i < $user->getAdresses()->count(); $i++){
@@ -108,7 +113,7 @@ class UserController extends AbstractController{
     }
 
     #[Route('/profile', name: 'user_profile', methods: ['GET'])]
-    public function index(CategorieRepository $categorieRepository, Session $session, UserRepository $userRepo): Response
+    public function profile(CategorieRepository $categorieRepository, Session $session, User2Repository $userRepo): Response
     {
 
         $user = $userRepo->findOneBy(['email' => $session->get("useremail")]);

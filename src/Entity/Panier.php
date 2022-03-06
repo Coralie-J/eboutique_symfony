@@ -15,7 +15,7 @@ class Panier
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'paniers')]
+    #[ORM\ManyToOne(targetEntity: User2::class, inversedBy: 'paniers')]
     private $id_user;
 
     #[ORM\OneToMany(mappedBy: 'id_panier', targetEntity: PanierLine::class)]
@@ -31,12 +31,12 @@ class Panier
         return $this->id;
     }
 
-    public function getIdUser(): ?User
+    public function getIdUser(): ?User2
     {
         return $this->id_user;
     }
 
-    public function setIdUser(?User $id_user): self
+    public function setIdUser(?User2 $id_user): self
     {
         $this->id_user = $id_user;
 

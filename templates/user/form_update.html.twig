@@ -4,7 +4,7 @@
 
 {% block body %}
 
-    <form action="/user/update/{{user.id}}" method="POST">
+    <form action="/user/update/" method="POST">
 
         <p>
             <label for="nom">Nom </label>
@@ -21,10 +21,10 @@
             <input type="text" name="email" value="{{user.email}}">
         </p>
 
-        <p>
+        {#<p>
             <label for="password">Password </label>
-            <input type="password" name="password" value="{{user.email}}">
-        </p>
+            <input type="password" name="password" value="{{user.password}}">
+        </p> #}
 
         {% set i = 0 %}
         {% for adresse in user.Adresses %}
