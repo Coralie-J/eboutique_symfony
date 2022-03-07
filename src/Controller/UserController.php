@@ -15,15 +15,18 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 #[Route('/user')]
 class UserController extends AbstractController{
 
     #[Route('/new', name: 'user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, UserPasswordHasherInterface $passwordHasher): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, CategorieRepository $categorieRepository, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User2();
+        $validation_user = [];
 
         if ($request->getMethod() === 'POST'){
             $user->setNom($_POST['nom']);
@@ -35,18 +38,32 @@ class UserController extends AbstractController{
             $user->setRoles(array('ROLE_USER'));
             $adress = new Adresse();
             $adress->setAdresse($_POST['adresse']);
-            $adress->setCodePostal($_POST['code_postal']);
+
+            if (is_numeric($_POST['code_postal'])){
+                $adress->setCodePostal($_POST['code_postal']);
+            }
+
             $adress->setVille($_POST['ville']);
-            $user->addAdress($adress);
-            $entityManager->persist($user);
-            $entityManager->persist($adress);
-            $entityManager->flush();
 
-            return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+            $validation_user = $validator->validate($user);
+            $validation_adresse = $validator->validate($adress);
+            
+            if (count($validation_adresse) > 0 || count($validation_user) > 0){
 
+                $validation_user->addAll($validation_adresse);
+            } else {
+                $user->addAdress($adress);
+                $entityManager->persist($user);
+                $entityManager->persist($adress);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('home', [], Response::HTTP_SEE_OTHER);
+            }
+            
         }
 
         return $this->render('user/form_create.html.twig', [
+            'errors'=> $validation_user,
             'user' => $user,
             'categories' => $categorieRepository->findAll(),
         ]);
@@ -77,9 +94,10 @@ class UserController extends AbstractController{
     }
 
     #[Route('/update/', name: 'user_update', methods: ['GET','POST'])]
-    public function update(User2Repository $userRepo, CategorieRepository $categorieRepository, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response {
+    public function update(User2Repository $userRepo, ValidatorInterface $validator, CategorieRepository $categorieRepository, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response {
 
         $user = $userRepo->findOneBy(["email" => $request->getSession()->get('useremail')]);
+        $validation_user = [];
 
         if ($request->getMethod() === "POST" ){
 
@@ -92,21 +110,30 @@ class UserController extends AbstractController{
             # $hashedPassword = $passwordHasher->hashPassword($user, $_POST['password']);
             # $user->setPassword($hashedPassword);
 
+            $validation_adresse = new ConstraintViolationList();
+
 
             for ($i=0; $i < $user->getAdresses()->count(); $i++){
                 $user->getAdresses()[$i]->setVille($request->request->get('ville'.$i));
                 $user->getAdresses()[$i]->setCodePostal($request->request->get('code_postal'. $i));
                 $user->getAdresses()[$i]->setAdresse($request->request->get('adresse'. $i));
+                $validation_adresse->addAll($validator->validate($user->getAdresses()[$i]));
             }
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $validation_user = $validator->validate($user);
 
-            return $this->redirectToRoute('user_profile', [], Response::HTTP_SEE_OTHER);
+            if (count($validation_adresse) > 0 || count($validation_user) > 0){
+                $validation_user->addAll($validation_adresse);
+            } else {
+                $entityManager->persist($user);
+                $entityManager->flush();
+                return $this->redirectToRoute('user_profile', [], Response::HTTP_SEE_OTHER);
+            }
 
         }
 
         return $this->render('user/form_update.html.twig', [
+            'errors' => $validation_user, 
             'user' => $user,
             'categories' => $categorieRepository->findAll()
         ]);

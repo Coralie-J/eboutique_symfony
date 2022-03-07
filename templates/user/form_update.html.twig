@@ -4,6 +4,10 @@
 
 {% block body %}
 
+    {% for error in errors %}
+        <p> {{error.message }} </p>
+    {% endfor %}
+
     <form action="/user/update/" method="POST">
 
         <p>

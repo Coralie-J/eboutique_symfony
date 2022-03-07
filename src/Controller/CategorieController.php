@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 #[Route('/categorie')]
@@ -27,21 +28,26 @@ class CategorieController extends AbstractController
 
     #[Route('/new', name: 'categorie_new', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_ADMIN")]
-    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, Session $session): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository, ValidatorInterface $validator): Response
     {
        
         $categorie = new Categorie();
         $form = $this->createForm(CategorieType::class, $categorie);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($categorie);
-            $entityManager->flush();
+        $validation_categorie = [];
 
-            return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $validation_categorie = $validator->validate($categorie);
+            if (count($validation_categorie) == 0){
+                $entityManager->persist($categorie);
+                $entityManager->flush();
+                return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->renderForm('categorie/new.html.twig', [
+            'errors' => $validation_categorie,
             'categorie' => $categorie,
             'categories' => $categorieRepository->findAll(),
             'form' => $form,

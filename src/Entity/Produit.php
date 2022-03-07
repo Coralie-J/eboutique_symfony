@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
@@ -14,6 +15,7 @@ class Produit
     private $id;
 
     #[ORM\Column(type: 'string', length: 60)]
+    #[Assert\NotBlank(message: "Le nom du produit ne peut pas être vide")]
     private $nom;
 
     #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'produits')]
@@ -21,6 +23,8 @@ class Produit
     private $type_categorie;
 
     #[ORM\Column(type: 'float')]
+    #[Assert\NotBlank(message: "Le prix ne peut pas être vide")]
+    #[Assert\Positive(message: "Le prix doit être supérieur à zéro mais là, il vaut {{ value }}")]
     private $prix_unitaire;
 
     #[ORM\Column(type: 'boolean')]
@@ -30,9 +34,11 @@ class Produit
     private $media;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: "La description du produit ne peut pas être vide")]
     private $description;
 
     #[ORM\Column(type: 'string', length: 70)]
+    #[Assert\NotBlank(message: "L'interprète ne peut pas être vide")]
     private $interprete;
 
     public function getId(): ?int

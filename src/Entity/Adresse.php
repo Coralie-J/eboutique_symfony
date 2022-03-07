@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\AdresseRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: AdresseRepository::class)]
 class Adresse
@@ -14,12 +15,20 @@ class Adresse
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: "L'adresse ne peut pas être vide")]
     private $adresse;
 
     #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: "Le code postal ne peut pas être vide")]
+    #[Assert\Length(
+        min: 5,
+        max: 5,
+        exactMessage: "Le code postal doit contenir 5 chiffres"
+    )]
     private $code_postal;
 
     #[ORM\Column(type: 'string', length: 60)]
+    #[Assert\NotBlank(message: "La ville ne peut pas être vide")]
     private $ville;
 
     #[ORM\ManyToOne(targetEntity: User2::class, inversedBy: 'adresses')]

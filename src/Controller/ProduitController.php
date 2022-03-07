@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/produit')]
 class ProduitController extends AbstractController
@@ -29,17 +30,24 @@ class ProduitController extends AbstractController
 
     #[Route('/new', name: 'produit_new', methods: ['GET', 'POST'])]
     #[IsGranted("ROLE_ADMIN")]
-    public function new(Request $request, EntityManagerInterface $entityManager, CategorieRepository $categorieRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ValidatorInterface $validator, CategorieRepository $categorieRepository): Response
     {
         $produit = new Produit();
+        $validation_produit = [];
 
         if ($request->getMethod() === "POST"){
             $categorie = $categorieRepository->findOneBy(["nom" => $request->request->get('type_categorie')]);
 
-            $produit->setDescription($request->request->get("description"));
+            $description = $request->request->get("description");
+
+            $produit->setDescription(trim($description));
             $produit->setInterprete($request->request->get("interprete"));
             $produit->setNom($request->request->get("nom"));
-            $produit->setPrixUnitaire($request->request->get("prix"));
+
+            if (is_numeric($request->request->get("prix"))){
+                $produit->setPrixUnitaire($request->request->get("prix"));
+            }
+
             $produit->setTypeCategorie($categorie);
             $produit->setDisponibilite($request->request->get("disponibilite") == "dispo" ? true : false );
 
@@ -49,14 +57,20 @@ class ProduitController extends AbstractController
             $media->setIdProduit($produit);
             $produit->setMedia($media);
 
-            $entityManager->persist($produit);
-            $entityManager->persist($media);
-            $entityManager->flush();
+            $validation_produit = $validator->validate($produit);
+            $validation_produit->addAll($validator->validate($media));
 
-            return $this->redirectToRoute('produit_index', [], Response::HTTP_SEE_OTHER);
+            if (count($validation_produit) == 0 ){
+                $entityManager->persist($produit);
+                $entityManager->persist($media);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('produit_index', [], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->render('produit/form.html.twig', [
+            'errors' => $validation_produit,
             'produit' => $produit,
             'categories' => $categorieRepository->findAll()
         ]);

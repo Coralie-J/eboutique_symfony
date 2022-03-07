@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
@@ -14,9 +15,16 @@ class Media
     private $id;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: "La source du media ne peut pas être vide")]
+    #[Assert\Regex(
+        pattern: '/(\.(?:jpg|jpeg|png))$/',
+        match: true,
+        message: "La source de l'image n'est pas au bon format",
+    )]
     private $source;
 
     #[ORM\Column(type: 'string', length: 60)]
+    #[Assert\NotBlank(message: "Le texte alternatif ne peut pas être vide")]
     private $alt;
 
     #[ORM\OneToOne(targetEntity: Produit::class, inversedBy: 'media')]

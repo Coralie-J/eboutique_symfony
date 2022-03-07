@@ -8,8 +8,14 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: User2Repository::class)]
+#[UniqueEntity(
+    fields: 'email',
+    message: 'L\'email {{ value }} est déjà utilisé par un autre utilisateur',
+)]
 class User2 implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -18,18 +24,23 @@ class User2 implements UserInterface, PasswordAuthenticatedUserInterface
     private $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Assert\NotBlank(message: "L'adresse mail ne peut pas être vide")]
+    #[Assert\Email]
     private $email;
 
     #[ORM\Column(type: 'json')]
     private $roles = [];
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: "Le mot de passe ne doit pas être vide")]
     private $password;
 
     #[ORM\Column(type: 'string', length: 60)]
+    #[Assert\NotBlank(message: "Le nom ne peut pas être vide")]
     private $nom;
 
     #[ORM\Column(type: 'string', length: 60)]
+    #[Assert\NotBlank(message: "Le prénom ne peut pas être vide")]
     private $prenom;
 
     #[ORM\OneToMany(mappedBy: 'id_user', targetEntity: Panier::class)]

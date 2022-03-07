@@ -5,6 +5,10 @@
 {% block body %}
     <h1>Create new Categorie</h1>
 
+    {% for error in errors %}
+        <p> {{error.message }} </p>
+    {% endfor %}
+
     {{ include('categorie/_form.html.twig') }}
 
     <a href="{{ path('categorie_index') }}">back to list</a>
